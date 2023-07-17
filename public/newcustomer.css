@@ -1,0 +1,58 @@
+/* Apply a dark background */
+body {
+    background-color: #333;
+    color: #fff;
+  }
+  
+  /* Center the form on the page */
+  h1 {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  /* Apply some spacing and styling to form elements */
+  form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  
+  form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  form input[type="text"],
+  form input[type="number"],
+  form input[type="file"] {
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid #fff;
+    border-radius: 3px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    text-align: center;
+  }
+  
+  form button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  form button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Customize form elements to match the theme */
+  /* Add your custom styles here */
+  

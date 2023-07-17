@@ -1,0 +1,39 @@
+<!-- newcustomer.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEW Registration</title>
+    <link rel="stylesheet" href="/newcustomer.css">
+</head>
+<h1>New Registration</h1>
+<body>
+  <form action="/newcustomer" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="name" name="name">
+        </div>
+        <div class="mb-3">
+          <label for="accountnum" class="form-label">Account Number</label>
+          <input type="number" class="form-control" id="accountnum" name="accountnum">
+        </div>
+        <div class="mb-3">
+          <label for="amount" class="form-label">Amount</label>
+          <input type="number" class="form-control" id="amount" name="amount">
+        </div>
+        <div class="mb-3">
+          <label for="gender" class="form-label">Gender</label>
+          <input type="text" class="form-control" id="gender" name="gender">
+        </div>
+        <div class="mb-3">
+          <label for="featureImage" class="form-label">Feature Image</label>
+          <input type="file" class="form-control" id="featureImage" name="featureImage">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  <button style="background-color: blue; color: white; padding: 10px 20px;"><a href="/newcustomer" style="text-decoration: none; color: white;">Sign Up</a></button>
+<button style="background-color: green; color: white; padding: 10px 20px;"><a href="/login" style="text-decoration: none; color: white;">Log In</a></button>
+
+</body>
+</html>

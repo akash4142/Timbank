@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Customers</title>
+  </head>
+  <body>
+    <h1>Customer List</h1>
+    <ul>
+      {{#each customers}}
+      <li>
+        <strong>Name:</strong> {{this.name}}<br>
+        <strong>Email:</strong> {{this.email}}
+      </li>
+      {{/each}}
+    </ul>
+  </body>
+</html>
