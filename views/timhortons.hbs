@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tim Hortons</title>
+  <link rel="stylesheet" type="text/css" href="tim.css">
+</head>
+<body>
+  <h1>Tim Hortons</h1>
+
+  <nav>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+  </nav>
+
+  <h2>Hot Beverages</h2>
+  <div class="card-container">
+    {{#each hotBeverages}}
+    <div class="card">
+      <img src="/" alt="{{name}}">
+      <h3>{{name}}</h3>
+      <p>Price: {{price}}</p>
+      <button class="order-button">Order</button>
+    </div>
+    {{/each}}
+  </div>
+
+  <h2>Cold Beverages</h2>
+  <div class="card-container">
+    {{#each coldBeverages}}
+    <div class="card">
+      <img src="{{image}}" alt="{{name}}">
+      <h3>{{name}}</h3>
+      <p>Price: {{price}}</p>
+      <button class="order-button">Order</button>
+    </div>
+    {{/each}}
+  </div>
+
+  <h2>Baked Goods</h2>
+  <div class="card-container">
+    {{#each bakedGoods}}
+    <div class="card">
+      <img src="{{image}}" alt="{{name}}">
+      <h3>{{name}}</h3>
+      <p>Price: {{price}}</p>
+      <button class="order-button">Order</button>
+    </div>
+    {{/each}}
+  </div>
+
+  <div id="order-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h3>Order Details</h3>
+      <p>Please enter the quantity:</p>
+      <input id="quantity-input" type="number" min="1" value="1">
+      <button id="confirm-button">Confirm Order</button>
+      <p id="order-status"></p>
+    </div>
+  </div>
+
+  <script src="timscript.js"></script>
+</body>
+</html>
