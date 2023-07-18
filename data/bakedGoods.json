@@ -1,0 +1,12 @@
+[
+  { "name": "Donut", "price": 1.49, "image": "images/baked/donut.avif" },
+  { "name": "Muffin", "price": 1.99, "image": "images/baked/muffin.jpg" },
+  { "name": "Bagel", "price": 1.79, "image": "images/baked/bagel.webp" },
+  { "name": "Croissant", "price": 2.29, "image": "images/baked/croissant.jpeg" },
+  { "name": "Cinnamon Roll", "price": 1.99, "image": "images/baked/cinnamonroll.avif" },
+  { "name": "Scone", "price": 1.69, "image": "images/baked/scone.jpeg" },
+  { "name": "Pastry", "price": 2.49, "image": "images/baked/pastru.jpeg" },
+  { "name": "Apple Fritter", "price": 1.99, "image": "images/baked/applefritter.jpeg" },
+  { "name": "Blueberry Muffin", "price": 1.99, "image": "images/baked/bbmuffin.avif" },
+  { "name": "Chocolate Chip Cookie", "price": 1.49, "image": "images/baked/cookie.avif" }
+]

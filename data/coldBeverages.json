@@ -1,0 +1,12 @@
+[
+  { "name": "Iced Coffee", "price": 2.99, "image": "images/coldbev/icedcoffee.jpg" },
+  { "name": "Iced Tea", "price": 2.49, "image": "images/coldbev/icedtea.webp" },
+  { "name": "Iced Lemonade", "price": 3.49, "image": "images/coldbev/lemonade.avif" },
+  { "name": "Iced Latte", "price": 3.99, "image": "images/coldbev/Icedlatte.webp" },
+  { "name": "Iced Mocha", "price": 3.49, "image": "images/coldbev/icedmocha.jpg" },
+  { "name": "Iced Americano", "price": 2.79, "image": "images/coldbev/americano.jpeg" },
+  { "name": "Iced Chai Latte", "price": 2.99, "image": "images/coldbev/chai latte.jpeg" },
+  { "name": "Iced Matcha Latte", "price": 3.29, "image": "images/coldbev/matcha latte.jpeg" },
+  { "name": "Iced Caramel Macchiato", "price": 3.49, "image": "images/coldbev/caramel.jpeg" },
+  { "name": "Iced Green Tea", "price": 2.99, "image": "images/coldbev/greentea.jpeg" }
+]

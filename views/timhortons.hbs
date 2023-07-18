@@ -6,7 +6,6 @@
 </head>
 <body>
   <h1>Tim Hortons</h1>
-
   <nav>
     <ul>
       <li><a href="#">Home</a></li>
@@ -15,52 +14,43 @@
   </nav>
 
   <h2>Hot Beverages</h2>
-  <div class="card-container">
+  <div class="card-container" id="hot-beverages-container">
     {{#each hotBeverages}}
     <div class="card">
-      <img src="/" alt="{{name}}">
+      <img src="{{image}}" alt="{{name}}">
       <h3>{{name}}</h3>
       <p>Price: {{price}}</p>
-      <button class="order-button">Order</button>
+      <button class="add-to-cart-button" data-name="{{name}}" data-price="{{price}}">Add to Cart</button>
     </div>
     {{/each}}
   </div>
 
   <h2>Cold Beverages</h2>
-  <div class="card-container">
+  <div class="card-container" id="cold-beverages-container">
     {{#each coldBeverages}}
     <div class="card">
       <img src="{{image}}" alt="{{name}}">
       <h3>{{name}}</h3>
       <p>Price: {{price}}</p>
-      <button class="order-button">Order</button>
+      <button class="add-to-cart-button" data-name="{{name}}" data-price="{{price}}">Add to Cart</button>
     </div>
     {{/each}}
   </div>
 
   <h2>Baked Goods</h2>
-  <div class="card-container">
+  <div class="card-container" id="baked-goods-container">
     {{#each bakedGoods}}
     <div class="card">
       <img src="{{image}}" alt="{{name}}">
       <h3>{{name}}</h3>
       <p>Price: {{price}}</p>
-      <button class="order-button">Order</button>
+      <button class="add-to-cart-button" data-name="{{name}}" data-price="{{price}}">Add to Cart</button>
     </div>
     {{/each}}
   </div>
 
-  <div id="order-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-button">&times;</span>
-      <h3>Order Details</h3>
-      <p>Please enter the quantity:</p>
-      <input id="quantity-input" type="number" min="1" value="1">
-      <button id="confirm-button">Confirm Order</button>
-      <p id="order-status"></p>
-    </div>
-  </div>
-
-  <script src="timscript.js"></script>
+  <!-- Include Handlebars library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+  <script src="/scripts.js"></script>
 </body>
 </html>

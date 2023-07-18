@@ -7,6 +7,9 @@ const path = require('path');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
+const { readDataFromFile } = require('./scripts');
+
+
 
 // Configure multer to store uploaded files in the 'uploads' folder
 const upload = multer({ dest: 'uploads/' });
@@ -148,9 +151,29 @@ app.post('/login', (req, res) => {
 });
 
 
-app.get('/timhortons',(req,res)=>{
-  res.render('timhortons',{layout:false});
-})
+// Route for '/timhortons' that renders the 'timhortons.hbs' file
+app.get('/timhortons', async (req, res) => {
+  try {
+    // Load the data from JSON files using Promises
+    const hotBeverages = await readDataFromFile(path.join(__dirname, 'data/hotBeverages.json'));
+    const coldBeverages = await readDataFromFile(path.join(__dirname, 'data/coldBeverages.json'));
+    const bakedGoods = await readDataFromFile(path.join(__dirname, 'data/bakedGoods.json'));
+
+    // Render the 'timhortons.hbs' file with the loaded data
+    res.render('timhortons', {
+      layout: false,
+      hotBeverages: hotBeverages,
+      coldBeverages: coldBeverages,
+      bakedGoods: bakedGoods
+    });
+  } catch (error) {
+    console.error('Error reading data:', error);
+    res.status(500).send('Error reading data');
+  }
+});
+
+
+
 
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Route not found' });

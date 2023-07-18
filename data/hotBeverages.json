@@ -1,0 +1,12 @@
+[
+  { "name": "Hot Coffee", "price": 2.49, "image": "images/hotbev/hotcoffee.jpg" },
+  { "name": "Hot Tea", "price": 1.99, "image": "images/hotbev/hotea.webp" },
+  { "name": "Hot Chocolate", "price": 2.99, "image": "images/hotbev/hotchoco.jpeg" },
+  { "name": "Cappuccino", "price": 3.49, "image": "images/hotbev/cappuccino.jpeg" },
+  { "name": "Espresso", "price": 2.99, "image": "images/hotbev/espresso.jpeg" },
+  { "name": "Latte", "price": 3.99, "image": "images/hotbev/latte.jpeg" },
+  { "name": "Mocha", "price": 3.49, "image": "images/hotbev/mocha.jpeg" },
+  { "name": "Macchiato", "price": 3.29, "image": "images/hotbev/macchiato.jpeg" },
+  { "name": "Americano", "price": 2.79, "image": "images/hotbev/americano.jpeg" },
+  { "name": "Chai Latte", "price": 2.99, "image": "images/hotbev/chailatte.jpeg" }
+]
