@@ -12,7 +12,7 @@ const { readDataFromFile } = require('./scripts');
 
 
 // Configure multer to store uploaded files in the 'uploads' folder
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 Handlebars.create({ allowProtoPropertiesByDefault: true });
@@ -24,6 +24,16 @@ app.engine('hbs', exphbs.engine({
   defaultLayout: 'main', // Specify the default layout as 'main.hbs'
   layoutsDir: path.join(__dirname, 'views', 'layouts') // Set the directory for layout files
 }));
+
+const storage = multer.diskStorage({
+  destination: '/tmp/uploads', // Use the temporary directory /tmp/uploads
+  filename: function (req, file, cb) {
+    // Your filename logic here, if needed
+    cb(null, file.originalname);
+  },
+});
+
+
 
 
 app.set('view engine', 'hbs');
