@@ -15,7 +15,7 @@ const { readDataFromFile } = require('./scripts');
 const upload = multer({ dest: 'uploads/' });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-
+Handlebars.create({ allowProtoPropertiesByDefault: true });
 
 // Configure express-handlebars
 // Configure express-handlebars
@@ -50,12 +50,15 @@ app.get('/customers', function (req, res) {
   customers
     .getAllCustomers()
     .then((customers) => {
-      res.render('customers', { customers: customers,layout:false });
+      console.log('Customers passed to the template:', customers);
+      res.render('customers', { customers: customers, layout: false });
     })
     .catch((err) => {
+      console.log('Error:', err);
       res.send('Error: ' + err);
     });
 });
+
 
 
 app.get('/about', function (req, res) {
@@ -115,8 +118,7 @@ app.post('/newcustomer', upload.single('featureImage'), (req, res) => {
       // Add other properties from req.body as needed
     };
 
-    customers
-      .addcustomer(newItem)
+    customers.addCustomer(newItem)
       .then((data) => {
         console.log('New customer data:', data); // Log the data entered by the user
         res.redirect('/customers');

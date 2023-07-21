@@ -1,85 +1,111 @@
-const fs = require('fs');
-const path = require('path');
+const { Sequelize, DataTypes } = require('sequelize');
 
-let customers = [];
+// Replace the database connection details with your PostgreSQL credentials
+const sequelize = new Sequelize('rvjobrka', 'rvjobrka', 'WrPpsx9tZ1lRDuTUxALe2fYDyaeMDFMJ', {
+  host: 'stampy.db.elephantsql.com',
+  dialect: 'postgres',
+  port: 5432,
+});
 
+// Define the "Customer" model
+const Customer = sequelize.define('Customer', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  accountnum: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  // Add other customer fields as needed
+  // For example:
+  // name: { type: DataTypes.STRING, allowNull: false },
+  // password: { type: DataTypes.STRING, allowNull: false },
+});
+
+// Initialize the database connection and sync the model
 module.exports.initialize = function() {
   return new Promise((resolve, reject) => {
-    fs.readFile(path.resolve('./data/customers.json'), 'utf8', (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        try {
-          customers = JSON.parse(data);
-          resolve();
-        } catch (err) {
-          reject('Error parsing customers data');
-        }
-      }
-    });
-  });
-};
-
-
-module.exports.saveCustomersToFile = function() {
-  return new Promise((resolve, reject) => {
-    const jsonData = JSON.stringify(customers, null, 2);
-    fs.writeFile(path.resolve('./data/customers.json'), jsonData, 'utf8', (err) => {
-      if (err) {
-        reject(err);
-      } else {
+    sequelize.sync()
+      .then(() => {
+        console.log('Database synced successfully.');
         resolve();
-      }
-    });
+      })
+      .catch((err) => {
+        console.error('Unable to sync the database:', err);
+        reject(new Error('Unable to sync the database'));
+      });
   });
 };
 
+// Save customers to the database
+module.exports.saveCustomersToDatabase = function(customers) {
+  return new Promise((resolve, reject) => {
+    Customer.bulkCreate(customers, { updateOnDuplicate: ['accountnum'] })
+      .then(() => resolve())
+      .catch(err => reject(err));
+  });
+};
+
+// Get all customers from the database
+// In the getAllCustomers function
 module.exports.getAllCustomers = function() {
-  return new Promise((resolve, reject) => {
-    customers.length > 0 ? resolve(customers) : reject('No results');
-  });
+  return Customer.findAll()
+    .then(customers => {
+      // Convert Sequelize objects to plain JSON objects
+      const plainCustomers = customers.map(customer => customer.get({ plain: true }));
+      return plainCustomers;
+    })
+    .catch(err => {
+      console.error('Error fetching customers:', err);
+      throw err;
+    });
 };
 
 
-module.exports.getcustomersById = function (id) {
-    return new Promise((resolve, reject) => {
-      const customer = customers.find((customer) => customer.id.toString() === id);
-  
-      if (!customer) {
-        reject('No result returned');
-      }
-  
-      resolve(customer);
-    });
-  };
 
-
-module.exports.addcustomer = function(data){
+// Get a customer by ID from the database
+module.exports.getCustomerById = function(id) {
   return new Promise((resolve, reject) => {
-    
+    Customer.findByPk(id)
+      .then(customer => {
+        if (customer) {
+          resolve(customer);
+        } else {
+          reject(new Error('No result returned'));
+        }
+      })
+      .catch(err => reject(err));
+  });
+};
 
-    data.id = customers.length + 1;
-    customers.push(data);
-    this.saveCustomersToFile();
-    resolve(data);
-  })
-}
+// Add a customer to the database
+module.exports.addCustomer = function(data) {
+  return new Promise((resolve, reject) => {
+    Customer.create(data)
+      .then(createdCustomer => resolve(createdCustomer))
+      .catch(err => reject(err));
+  });
+};
 
+// Login a customer based on accountnum and password
 module.exports.login = function(data) {
+  const { accountnum, password } = data;
+
   return new Promise((resolve, reject) => {
-    const { accountnum, password } = data;
-
-    
-    const customer = customers.find((customer) => {
-      return customer.accountnum === accountnum ;
-    });
-
-    if (customer) {
-      console.log('login success');
-      resolve(customer);
-    } else {
-      console.log('No match found');
-      reject('No match found');
-    }
+    Customer.findOne({
+      where: { accountnum: accountnum },
+    })
+    .then(customer => {
+      if (customer) {
+        console.log('Login success');
+        resolve(customer);
+      } else {
+        console.log('No match found');
+        reject(new Error('No match found'));
+      }
+    })
+    .catch(err => reject(err));
   });
 };
