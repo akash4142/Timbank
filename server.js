@@ -12,7 +12,7 @@ const { readDataFromFile } = require('./scripts');
 
 
 // Configure multer to store uploaded files in the 'uploads' folder
-const upload = multer({ storage });
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 Handlebars.create({ allowProtoPropertiesByDefault: true });
@@ -33,7 +33,7 @@ const storage = multer.diskStorage({
   },
 });
 
-
+const upload = multer({ storage });
 
 
 app.set('view engine', 'hbs');
