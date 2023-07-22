@@ -49,8 +49,28 @@
     {{/each}}
   </div>
 
+
+<!-- Cart Section -->
+  <div id="cart-container">
+    <h2>Cart</h2>
+    {{#each cartItems}}
+    <div class="cart-item">
+      <p>{{name}} - Price: {{price}}</p>
+    </div>
+    {{/each}}
+  </div>
+
+<div id="total-container">
+  <!-- Total price will be displayed here -->
+</div>
+  <!-- Order Button -->
+  
+  <button id="pay-now-button">Pay Now</button>
+
+
   <!-- Include Handlebars library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
   <script src="/scripts.js"></script>
+  <script src="/client_script.js"></script>
 </body>
 </html>

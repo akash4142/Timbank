@@ -80,6 +80,7 @@ app.get('/newcustomer', function (req, res) {
 });
 
 app.post('/newcustomer', upload.single('featureImage'), (req, res) => {
+  console.log(req.body)
   if (req.file) {
     const streamupload = (req) => {
       return new Promise((resolve, reject) => {
@@ -117,6 +118,7 @@ app.post('/newcustomer', upload.single('featureImage'), (req, res) => {
   } else {
     processItem('');
   }
+  
 
   function processItem(imageUrl) {
     const newItem = {
@@ -125,6 +127,7 @@ app.post('/newcustomer', upload.single('featureImage'), (req, res) => {
       accountnum: req.body.accountnum,
       amount: req.body.amount,
       gender: req.body.gender,
+      password: req.body.password,
       // Add other properties from req.body as needed
     };
 
@@ -141,6 +144,22 @@ app.post('/newcustomer', upload.single('featureImage'), (req, res) => {
 });
 
 
+// Route to handle the form submission and delete the account
+app.post('/delete', (req, res) => {
+  const accountnumToDelete = req.body.accountnum;
+
+  // Call the deleteCustomerByAccountNum function to delete the account
+  customers.deleteCustomerByAccountNum(accountnumToDelete)
+    .then((rowsDeleted) => {
+      // Account deleted successfully, redirect to the customers' page
+      res.redirect('/customers');
+    })
+    .catch((err) => {
+      res.send(`Error deleting account: ${err.message}`);
+    });
+});
+
+
 // Login route
 app.get('/login', (req, res) => {
   res.render('login', { layout: false });
@@ -150,16 +169,20 @@ app.post('/login', (req, res) => {
   const accountnum = req.body.accountnum;
   const password = req.body.password;
 
-  customers
-    .login({ accountnum, password })
-    .then((customer) => {
-      console.log(customers.length);
-      res.redirect('/customers');
-    })
-    .catch((error) => {
-      console.log("no match found");
-      res.status(500).json({ message: 'Login failed' });
-    });
+  customers.login({ accountnum, password })
+  .then((customer) => {
+    if (customer) {
+      // User authentication successful, redirect to the payment details page
+      res.redirect('/payment-details');
+    } else {
+      // User authentication failed, redirect back to the login page with an error message
+      res.redirect('/login?error=1');
+    }
+  })
+  .catch((error) => {
+    console.error('Error during login:', error);
+    res.status(500).json({ message: 'Login failed' });
+  });
 });
 
 
@@ -187,8 +210,81 @@ app.get('/timhortons', async (req, res) => {
 
 
 
+// Route to handle payment processing after the user clicks "Pay Now" and is logged in
+app.get('/payment-details', (req, res) => {
+  
+  if(req.body){
+  const {accountnum} = req.body;
+  const totalAmount = customers.calculateTotalAmountFromCart(req); // Implement a function to calculate the total amount from the user's cart
+
+  // Call the deductAmount function to deduct the total amount from the user's account
+  customers.deductAmount(accountnum, totalAmount)
+    .then(() => {
+      // Deduction successful, process the order
+      // Save the order details to the database or perform any other required actions
+      // For simplicity, we'll simulate order success for this example
+      const orderSuccess = true;
+        if (orderSuccess) {
+          // Redirect the user to the "Order Received" page
+          res.redirect('/order-received');
+        } else {
+          // Handle payment failure
+          res.status(500).json({ success: false, message: 'Payment failed' });
+        }
+      })
+      .catch((error) => {
+        console.error('Error deducting payment:', error);
+        res.status(500).json({ success: false, message: 'Payment failed' });
+      });
+  } else {
+    // User is not logged in, send a 401 unauthorized status
+    res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+});
+
+
+// app.post('/process-payment')
+app.post('/process-payment', (req, res) => {
+  const { accountnum, password } = req.body; // Assuming the form sends 'accountnum' and 'password' fields
+
+  // Authenticate the user based on account number and password
+  customers.authenticateUser(accountnum, password)
+    .then((userId) => {
+      if (userId) {
+        // User authentication successful, proceed with payment processing
+        const totalAmount = customers.calculateTotalAmountFromCart(req); // Implement a function to calculate the total amount from the user's cart
+
+        // Call the deductAmount function to deduct the total amount from the user's account
+        customers.deductAmount(accountnum, totalAmount)
+          .then(() => {
+            // Deduction successful, process the order
+            // Save the order details to the database or perform any other required actions
+            // For simplicity, we'll simulate order success for this example
+            const orderSuccess = true;
+            if (orderSuccess) {
+              res.json({ success: true });
+            } else {
+              res.json({ success: false });
+            }
+          })
+          .catch((error) => {
+            console.error('Error deducting amount:', error);
+            res.json({ success: false });
+          });
+      } else {
+        // User authentication failed, return failure response
+        res.json({ success: false, message: 'Invalid login credentials. Please try again.' });
+      }
+    })
+    .catch((error) => {
+      console.error('Error authenticating user:', error);
+      res.json({ success: false });
+    });
+});
+
+
 app.use((req, res, next) => {
-  res.status(404).json({ message: 'Route not found' });
+  res.status(404).render('404error', { layout: false });
 });
 
 customers
