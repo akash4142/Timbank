@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  
+</head>
+<body>
+  <h1>Welcome to Your Dashboard</h1>
+
+  <div class="functionality-section">
+    <h2>Delete Account</h2>
+    <form action="/delete" method="post">
+      <label for="accountnum">Account Number:</label>
+      <input type="text" id="accountnum" name="accountnum" required>
+      <button type="submit">Delete Account</button>
+    </form>
+  </div>
+
+  <div class="functionality-section">
+    <h2>Update Account</h2>
+    <form action="/update-account" method="post">
+      <label for="accountnum">Account Number:</label>
+      <input type="text" id="accountnum" name="accountnum" required>
+      <!-- Add other fields that you want to update, e.g., name, password, etc. -->
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+      <!-- Add more fields for other account details -->
+
+      <button type="submit">Update Account</button>
+    </form>
+  </div>
+
+
+<!-- Withdrawal Functionality Section -->
+  <div class="functionality-section">
+    <h2>Withdrawal</h2>
+    <form action="/withdraw" method="post">
+      <label for="withdrawAmount">Amount:</label>
+      <input type="number" id="withdrawAmount" name="amount" required>
+      <label for="withdrawAccountNum">Account Number:</label>
+      <input type="text" id="withdrawAccountNum" name="accountnum" required>
+      <button type="submit">Withdraw</button>
+    </form>
+  </div>
+
+<!-- transfer  Functionality Section -->
+   <div class="functionality-section">
+    <h2>Transfer</h2>
+    <form action="/transfer" method="post">
+      <label for="transferAmount">Amount:</label>
+      <input type="number" id="transferAmount" name="amount" required>
+      <label for="senderAccountNum">Sender's Account Number:</label>
+      <input type="text" id="senderAccountNum" name="senderAccount" required>
+      <label for="recipientAccountNum">Recipient's Account Number:</label>
+      <input type="text" id="recipientAccountNum" name="recipientAccount" required>
+      <button type="submit">Transfer</button>
+    </form>
+  </div>
+
+<div class="functionality-section">
+    <h2>Account Details</h2>
+    <form action="/account-details" method="post">
+      <label for="accountnum">Account Number:</label>
+      <input type="text" id="accountnum" name="accountnum" required>
+      <button type="submit">View Details</button>
+    </form>
+</div>
+  <!-- Add other functionality sections for "Transaction" and "Transfer Balance" here -->
+
+  <script src="/client_script.js"></script>
+</body>
+</html>

@@ -15,20 +15,21 @@ const { readDataFromFile } = require('./scripts');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-Handlebars.create({ allowProtoPropertiesByDefault: true });
 
-// Configure express-handlebars
 // Configure express-handlebars
 app.engine('hbs', exphbs.engine({
   extname: '.hbs',
   defaultLayout: 'main', // Specify the default layout as 'main.hbs'
-  layoutsDir: path.join(__dirname, 'views', 'layouts') // Set the directory for layout files
+  layoutsDir: path.join(__dirname, 'views', 'layouts'), // Set the directory for layout files
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+  },
 }));
 
 const storage = multer.diskStorage({
   destination: '/tmp/uploads', // Use the temporary directory /tmp/uploads
   filename: function (req, file, cb) {
-    // Your filename logic here, if needed
+    
     cb(null, file.originalname);
   },
 });
@@ -72,7 +73,7 @@ app.get('/customers', function (req, res) {
 
 
 app.get('/about', function (req, res) {
-  res.sendFile(path.join(__dirname, '/views/about.html'));
+  res.render('about',{layout:false});
 });
 
 app.get('/newcustomer', function (req, res) {
@@ -128,12 +129,12 @@ app.post('/newcustomer', upload.single('featureImage'), (req, res) => {
       amount: req.body.amount,
       gender: req.body.gender,
       password: req.body.password,
-      // Add other properties from req.body as needed
+      
     };
 
     customers.addCustomer(newItem)
       .then((data) => {
-        console.log('New customer data:', data); // Log the data entered by the user
+        console.log('New customer data:', data); 
         res.redirect('/customers');
       })
       .catch((error) => {
@@ -168,15 +169,16 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const accountnum = req.body.accountnum;
   const password = req.body.password;
-
+console.log(accountnum);
   customers.login({ accountnum, password })
   .then((customer) => {
     if (customer) {
+      console.log('login success')
       // User authentication successful, redirect to the payment details page
-      res.redirect('/payment-details');
+      res.redirect('/customers');
     } else {
       // User authentication failed, redirect back to the login page with an error message
-      res.redirect('/login?error=1');
+      res.redirect('404');
     }
   })
   .catch((error) => {
@@ -207,80 +209,111 @@ app.get('/timhortons', async (req, res) => {
   }
 });
 
-
-
-
-// Route to handle payment processing after the user clicks "Pay Now" and is logged in
-app.get('/payment-details', (req, res) => {
-  
-  if(req.body){
-  const {accountnum} = req.body;
-  const totalAmount = customers.calculateTotalAmountFromCart(req); // Implement a function to calculate the total amount from the user's cart
-
-  // Call the deductAmount function to deduct the total amount from the user's account
-  customers.deductAmount(accountnum, totalAmount)
-    .then(() => {
-      // Deduction successful, process the order
-      // Save the order details to the database or perform any other required actions
-      // For simplicity, we'll simulate order success for this example
-      const orderSuccess = true;
-        if (orderSuccess) {
-          // Redirect the user to the "Order Received" page
-          res.redirect('/order-received');
-        } else {
-          // Handle payment failure
-          res.status(500).json({ success: false, message: 'Payment failed' });
-        }
-      })
-      .catch((error) => {
-        console.error('Error deducting payment:', error);
-        res.status(500).json({ success: false, message: 'Payment failed' });
-      });
-  } else {
-    // User is not logged in, send a 401 unauthorized status
-    res.status(401).json({ success: false, message: 'Unauthorized' });
-  }
-});
-
-
-// app.post('/process-payment')
-app.post('/process-payment', (req, res) => {
-  const { accountnum, password } = req.body; // Assuming the form sends 'accountnum' and 'password' fields
-
-  // Authenticate the user based on account number and password
-  customers.authenticateUser(accountnum, password)
-    .then((userId) => {
-      if (userId) {
-        // User authentication successful, proceed with payment processing
-        const totalAmount = customers.calculateTotalAmountFromCart(req); // Implement a function to calculate the total amount from the user's cart
-
-        // Call the deductAmount function to deduct the total amount from the user's account
-        customers.deductAmount(accountnum, totalAmount)
-          .then(() => {
-            // Deduction successful, process the order
-            // Save the order details to the database or perform any other required actions
-            // For simplicity, we'll simulate order success for this example
-            const orderSuccess = true;
-            if (orderSuccess) {
-              res.json({ success: true });
-            } else {
-              res.json({ success: false });
-            }
-          })
-          .catch((error) => {
-            console.error('Error deducting amount:', error);
-            res.json({ success: false });
-          });
-      } else {
-        // User authentication failed, return failure response
-        res.json({ success: false, message: 'Invalid login credentials. Please try again.' });
-      }
+app.get('/dashboard', (req, res) => {
+  // Assuming you have a function to get all customers from the database
+  // You can also add other data that you want to display on the dashboard page
+  customers.getAllCustomers()
+    .then(customers => {
+      // Render the dashboard page with the customers data and other functionality
+      res.render('dashboard', { layout: false, customers: customers });
     })
-    .catch((error) => {
-      console.error('Error authenticating user:', error);
-      res.json({ success: false });
+    .catch(error => {
+      console.error('Error fetching customers:', error);
+      res.status(500).json({ message: 'Failed to fetch customers' });
     });
 });
+
+
+app.post('/update-account', (req, res) => {
+  const { accountnum, name, password } = req.body;
+
+  // Assuming you have a function to update customer details in the database
+  // You can update the details based on the "accountnum" and "name" values received from the form
+  customers.updateAccount({ accountnum, name, password })
+    .then(() => {
+      // Account details updated successfully, you can redirect to the dashboard or show a success message
+      res.redirect('/customers');
+    })
+    .catch((error) => {
+      // Handle any errors that occurred during the account update process
+      console.error('Error updating account:', error);
+      res.status(500).json({ message: 'Account update failed' });
+    });
+});
+
+
+// Route to handle the withdrawal form submission
+app.post('/withdraw', (req, res) => {
+  const accountnum = req.body.accountnum;
+  const amount = parseFloat(req.body.amount);
+
+  // Check if the amount is valid (greater than 0)
+  if (isNaN(amount) || amount <= 0) {
+    return res.status(400).json({ success: false, message: 'Invalid withdrawal amount' });
+  }
+
+  // Assuming you have a function to handle the withdrawal process in your "functions.js" file
+  customers.withdrawAmount(accountnum, amount)
+    .then(() => {
+      // Withdrawal successful
+      res.json({ success: true, message: 'Withdrawal successful' });
+   
+    })
+    .catch((error) => {
+      // Withdrawal failed due to insufficient funds or other errors
+      console.error('Error during withdrawal:', error);
+      res.status(500).json({ success: false, message: 'Withdrawal failed' });
+    });
+});
+
+
+// Route to handle the transfer form submission
+app.post('/transfer', (req, res) => {
+  const senderAccount = req.body.senderAccount;
+  const recipientAccount = req.body.recipientAccount;
+  const amount = parseFloat(req.body.amount);
+
+  // Call the performTransaction function to transfer amount between accounts
+  customers.performTransaction(senderAccount, recipientAccount, amount)
+    .then(() => {
+      // Transaction successful, redirect to the dashboard
+      res.redirect('/dashboard');
+    })
+    .catch((err) => {
+      // Handle any errors that occurred during the transaction
+      console.error('Error performing transaction:', err);
+      res.status(500).json({ message: 'Transaction failed' });
+    });
+});
+
+
+// Route to handle the customer details page
+app.get('/customer/:accountnum', (req, res) => {
+  const accountnum = req.params.accountnum;
+
+  // Call the getCustomerDetails function to retrieve the customer details
+  customers.getCustomerDetails(accountnum)
+    .then((accountDetails) => {
+      console.log(accountDetails.name)
+      // Render the customer details page with the account details data
+      res.render('customer', { layout: false, accountDetails: accountDetails });
+    })
+    .catch((error) => {
+      console.error('Error fetching customer details:', error);
+      res.status(500).json({ message: 'Failed to fetch customer details' });
+    });
+});
+
+// Route to handle the form submission and fetch customer details
+app.post('/account-details', (req, res) => {
+  const accountnum = req.body.accountnum;
+
+  // Redirect to the customer details page for the provided account number
+  res.redirect(`/customer/${accountnum}`);
+});
+
+
+
 
 
 app.use((req, res, next) => {

@@ -1,13 +1,13 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-// Replace the database connection details with your PostgreSQL credentials
+// postgrad database 
 const sequelize = new Sequelize('rvjobrka', 'rvjobrka', 'WrPpsx9tZ1lRDuTUxALe2fYDyaeMDFMJ', {
   host: 'stampy.db.elephantsql.com',
   dialect: 'postgres',
   port: 5432,
 });
 
-// Define the "Customer" model
+//customer model 
 const Customer = sequelize.define('Customer', {
   id: {
     type: DataTypes.INTEGER,
@@ -31,10 +31,10 @@ const Customer = sequelize.define('Customer', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  // Add other customer fields as needed
+  
 });
 
-// Initialize the database connection and sync the model
+// initializing the data from database
 module.exports.initialize = function() {
   return new Promise((resolve, reject) => {
     Customer.sync()
@@ -108,21 +108,23 @@ module.exports.calculateTotalAmountFromCart = function (req) {
 };
 
 
-
-// Get a customer by ID from the database
-module.exports.getCustomerById = function(id) {
+// Get a customer by account number from the database
+module.exports.getCustomerBycustomernum = function(accountnum) {
   return new Promise((resolve, reject) => {
-    Customer.findByPk(id)
+    Customer.findOne({
+      where: { accountnum: accountnum },
+    })
       .then(customer => {
         if (customer) {
           resolve(customer);
         } else {
-          reject(new Error('No result returned'));
+          reject(new Error('No customer found with the specified account number'));
         }
       })
       .catch(err => reject(err));
   });
 };
+
 
 // Add a customer to the database
 module.exports.addCustomer = function(data) {
@@ -155,41 +157,140 @@ module.exports.login = function(data) {
 };
 
 
-// Function to deduct the total amount from the user's account
-module.exports.deductAmount = function (accountnum, totalAmount) {
-  console.log("hrllo");
+
+// Function to update customer account details in the database
+module.exports.updateAccount = function(data) {
+  const { accountnum, name, password } = data;
+
   return new Promise((resolve, reject) => {
     Customer.findOne({
-      where:{accountnum:accountnum}
+      where: { accountnum: accountnum },
+    })
+    .then(customer => {
+      if (customer) {
+        // Update the customer's details with the new values
+        customer.update({ name: name, password: password })
+          .then(() => {
+            console.log('Account updated successfully');
+            resolve();
+          })
+          .catch((err) => {
+            console.error('Error updating account:', err);
+            reject(new Error('Failed to update account'));
+          });
+      } else {
+        console.log('Customer not found');
+        reject(new Error('Customer not found'));
+      }
+    })
+    .catch(err => reject(err));
+  });
+};
+
+
+// Function to withdraw amount from a customer's account
+module.exports.withdrawAmount = function(accountnum, amount) {
+  
+  return new Promise((resolve, reject) => {
+    Customer.findOne({
+      where: { accountnum: accountnum },
     })
       .then((customer) => {
-        if (customer) {
-          // Assuming the customer has a "balance" field representing their account balance
-          const updatedBalance = customer.amount - totalAmount;
+        if (!customer) {
+          // If customer not found, reject with an error message
+          reject(new Error('Customer not found'));
+        } else {
+          // Check if the customer has sufficient balance for the withdrawal
+          if (customer.amount >= amount) {
+            // Calculate the updated balance after withdrawal
+            const updatedBalance = customer.amount - amount;
 
-          if (updatedBalance >= 0) {
             // Update the customer's balance in the database
             customer.update({ amount: updatedBalance })
               .then(() => {
-                console.log('Amount deducted successfully');
+                console.log('Withdrawal successful');
                 resolve();
               })
               .catch((err) => {
                 console.error('Error updating customer balance:', err);
-                reject(new Error('Failed to deduct amount'));
+                reject(new Error('Failed to withdraw amount'));
               });
           } else {
-            console.log('Insufficient funds');
+            
             reject(new Error('Insufficient funds'));
           }
-        } else {
-          console.log('Customer not found');
-          reject(new Error('Customer not found'));
         }
       })
       .catch((err) => {
         console.error('Error fetching customer:', err);
-        reject(new Error('Failed to deduct amount'));
+        reject(new Error('Failed to withdraw amount'));
+      });
+  });
+};
+
+
+// Function to perform a transaction (transfer money to another account)
+module.exports.performTransaction = function(senderAccountNum, recipientAccountNum, amount) {
+  senderAccountNum = senderAccountNum.toString();
+  recipientAccountNum = recipientAccountNum.toString();
+  return new Promise((resolve, reject) => {
+    // Get the sender and recipient customers using their account numbers
+    let sender, recipient;
+    module.exports.getCustomerBycustomernum(senderAccountNum) // Use module.exports to access the getCustomerBycustomernum function
+      .then(senderCustomer => {
+        sender = senderCustomer;
+        return module.exports.getCustomerBycustomernum(recipientAccountNum); // Use module.exports to access the getCustomerBycustomernum function
+      })
+      .then(recipientCustomer => {
+        recipient = recipientCustomer;
+        // Perform the transaction only if both sender and recipient are found
+        if (!sender || !recipient) {
+          reject(new Error('Invalid sender or recipient account number'));
+        } else if (sender.amount < amount) {
+          reject(new Error('Insufficient funds'));
+        } else {
+          // Deduct the amount from the sender's account and update both sender and recipient accounts
+          const updatedSenderAmount = sender.amount - amount;
+          const updatedRecipientAmount = recipient.amount + amount;
+
+          // Update the sender and recipient amounts in the database
+          sender.update({ amount: updatedSenderAmount })
+            .then(() => {
+              recipient.update({ amount: updatedRecipientAmount })
+                .then(() => {
+                  console.log('Transaction successful');
+                  resolve();
+                })
+                .catch(error => {
+                  console.error('Error updating recipient amount:', error);
+                  reject(new Error('Transaction failed'));
+                });
+            })
+            .catch(error => {
+              console.error('Error updating sender amount:', error);
+              reject(new Error('Transaction failed'));
+            });
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching sender or recipient:', error);
+        reject(new Error('Transaction failed'));
+      });
+  });
+};
+
+
+// Function to get customer details by account number
+module.exports.getCustomerDetails = function(accountnum) {
+  return new Promise((resolve, reject) => {
+    module.exports.getCustomerBycustomernum(accountnum)
+      .then((accountDetails) => {
+        // If customer details found, resolve with the data
+        resolve(accountDetails);
+      })
+      .catch((error) => {
+        console.error('Error fetching customer details:', error);
+        reject(new Error('Failed to fetch customer details'));
       });
   });
 };

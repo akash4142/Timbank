@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Customer Details</title>
+  <link rel="stylesheet" type="text/css" href="/styles.css">
+</head>
+<body>
+  <h1>Customer Details</h1>
+
+  <div class="customer-details">
+    {{#if accountDetails}}
+      <p><strong>Account Number:</strong> {{accountDetails.accountnum}}</p>
+      <p><strong>Name:</strong> {{accountDetails.name}}</p>
+      <p><strong>Amount:</strong> {{accountDetails.amount}}</p>
+      <!-- Add other account details as needed -->
+    {{else}}
+      <p>No account details found.</p>
+    {{/if}}
+  </div>
+
+  <a href="/dashboard">Back to Dashboard</a>
+
+  <script src="/client_script.js"></script>
+</body>
+</html>
