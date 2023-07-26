@@ -4,12 +4,13 @@ body {
   line-height: 1.6;
   margin: 0;
   padding: 0;
-  background-color: lightslategray;
+  background-color: #1a1a1a;
+  color: #fff;
 }
 
 /* Header styles */
 header {
-  background-color: #007bff;
+  background-color: #333;
   color: #fff;
   padding: 1rem;
   text-align: center;
@@ -29,11 +30,11 @@ section {
   margin: 0 auto;
   padding: 0 1rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background-color: #333;
 }
 
 section h2 {
-  background-color: #007bff;
+  background-color: #222;
   color: #fff;
   padding: 0.5rem 1rem;
   margin: 0;
@@ -55,7 +56,7 @@ section ul {
 footer {
   text-align: center;
   padding: 1rem 0;
-  background-color: #007bff;
+  background-color: #333;
   color: #fff;
 }
 
@@ -98,7 +99,7 @@ section:nth-child(odd) .container {
 
 /* Nav Bar styles */
 .navbar {
-  background: #007bff;
+  background: #1a1a1a;
   height: 80px;
   display: flex;
   justify-content: center;
@@ -138,6 +139,7 @@ section:nth-child(odd) .container {
 
 .navbar__toggle {
   display: none;
+  animation: fadeInUp 2s ease;
 }
 
 .navbar__menu {
@@ -149,6 +151,7 @@ section:nth-child(odd) .container {
 
 .navbar__item {
   height: 80px;
+  animation: fadeInUp 2s ease;
 }
 
 .navbar__links {
@@ -201,10 +204,12 @@ section:nth-child(odd) .container {
 
   .navbar__toggle {
     display: block;
+    animation: fadeInUp 2s ease;
   }
 
   .navbar__item {
     width: 100%;
+    animation: fadeInUp 2s ease;
   }
 
   .navbar__links {
@@ -275,5 +280,30 @@ section:nth-child(odd) .container {
 
 
 .container {
-  background-color: slateblue;
+  background-color: #222;
+}
+
+.image-section {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  animation: slideInLeft 2s ease; /* Apply animation to the image */
+}
+
+.image-section img {
+  max-width: 300px; /* Set the maximum width of the image to reduce its size */
+  height: 400px; /* Maintain the aspect ratio of the image */
+}
+
+/* Animation for image */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

@@ -223,7 +223,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
+    background-image: url('./images/dashboard.jpg') ;
   }
   
   .container {
@@ -282,14 +282,16 @@ body {
 /* Styling for Delete Account functionality section */
 #delete {
   background-color: #f77062;
-  color: #fff;
+  color:black;
 }
 
 #delete h2 {
+  padding: 10px 10px 10px 10px;
   background-color: #fff;
   color: #f77062;
   padding: 8px;
   border-radius: 5px;
+  text-align: center;
 }
 
 #delete button[type="submit"] {
@@ -307,14 +309,16 @@ body {
 /* Styling for Update Account functionality section */
 #update {
   background-color: #8dcff6;
-  color: #fff;
+  color: black;
 }
 
 #update h2 {
+  padding: 10px 10px 10px 10px;
   background-color: #fff;
   color: #8dcff6;
   padding: 8px;
   border-radius: 5px;
+  text-align: center;
 }
 
 #update button[type="submit"] {
@@ -332,14 +336,16 @@ body {
 /* Styling for Withdrawal functionality section */
 #withdraw {
   background-color: #6ab04c;
-  color: #fff;
+  color: black;
 }
 
 #withdraw h2 {
+  padding: 10px 10px 10px 10px;
   background-color: #fff;
   color: #6ab04c;
   padding: 8px;
   border-radius: 5px;
+  text-align: center;
 }
 
 #withdraw button[type="submit"] {
@@ -357,14 +363,17 @@ body {
 /* Styling for Transfer functionality section */
 #transfer {
   background-color: #ffcc29;
-  color: #fff;
+  color: black;
+  padding: 10px 10px 10px 10px;
 }
 
 #transfer h2 {
+  padding: 10px 10px 10px 10px;
   background-color: #fff;
   color: #ffcc29;
   padding: 8px;
   border-radius: 5px;
+  text-align: center;
 }
 
 #transfer button[type="submit"] {
@@ -382,7 +391,7 @@ body {
 /* Styling for Account Details functionality section */
 #details {
   background-color: #ffb273;
-  color: #fff;
+  color: black;
 }
 
 #details h2 {
@@ -390,6 +399,8 @@ body {
   color: #ffb273;
   padding: 8px;
   border-radius: 5px;
+  padding: 10px 10px 10px 10px;
+  text-align: center;
 }
 
 #details button[type="submit"] {
@@ -408,6 +419,46 @@ body {
   display: none;
   opacity: 0;
   transform: translateY(20px);
+  padding: 20px;
+  text-align: center;
+}
+
+.functionality-section label {
+  display: block;
+  margin-bottom: 10px; /* Add spacing between labels and input fields */
+}
+
+.functionality-section h2 {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.functionality-section input[type="text"],
+.functionality-section input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 5px auto; /* Center the input fields and add spacing */
+  max-width: 300px; 
+}
+
+.functionality-section button[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.functionality-section button[type="submit"]:hover {
+  background-color: #0056b3; /* Darker shade on hover */
 }
 
 .functionality-section.show {
