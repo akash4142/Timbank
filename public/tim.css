@@ -1,3 +1,8 @@
+body {
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
 /* Reset some default styles for better consistency */
 body, h1, h2, h3, p, ul, li, a, button {
   margin: 0;
@@ -10,16 +15,10 @@ body, h1, h2, h3, p, ul, li, a, button {
   text-align: center;
 }
 
-h2{
-  font-size: 30;
-  color: palevioletred;
-
-}
-
-/* Global styles */
-body {
-  background-color: #f7f7f7;
-  color: #333;
+h2 {
+  font-size: 30px;
+  color: #ff8080;
+  margin-bottom: 20px;
 }
 
 .container {
@@ -30,12 +29,10 @@ body {
 
 h1 {
   text-align: center;
-  color: red; /* Heading color */
-  font-size: 36px; /* Heading font size */
-  margin-bottom: 20px;
+  color: #ff4d4d;
+  font-size: 36px;
+  margin-bottom: 30px;
 }
-
-
 
 nav ul {
   display: flex;
@@ -54,17 +51,20 @@ nav li {
 }
 
 .card {
-  width: calc(33.33% - 20px);
+  width: calc(30% - 20px);
+  height: 300px;
   margin-bottom: 30px;
   padding: 15px;
-  background-color: #fff;
+  background-color: #333;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 2px solid black; /* Card border */
+  border: 2px solid #000;
+  border-radius: 5px;
+  transition: transform 0.3s ease;
 }
 
 .card img {
-  width: 100%;
-  height: auto;
+  width: 100px;
+  height: 100px;
   margin-bottom: 10px;
 }
 
@@ -84,15 +84,80 @@ nav li {
   margin: 0 auto;
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #007BFF;
+  background-color: #ff4d4d;
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .add-to-cart-button:hover {
-  background-color: #0056b3;
+  background-color: #ff8080;
+}
+
+/* Style the cart container */
+#cart-container {
+  position: fixed;
+  top: 50%;
+  right: 10px;
+  width: 300px;
+  transform: translateY(-50%);
+  padding: 10px;
+  background-color:royalblue;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid #333;
+  border-radius: 5px;
+  display: none;
+  color:turquoise;
+}
+
+.cart-item {
+  /* Add animation for new cart items */
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes slideInRight {
+  0% {
+    right: -350px;
+  }
+  100% {
+    right: 10px;
+  }
+}
+
+/* Style the pay now button */
+#pay-now-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#pay-now-button:hover {
+  background-color: #218838;
+}
+
+/* Style the close button in the cart container */
+#cart-container .close-button {
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Style the total container */
+#total-container {
+  text-align: right;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #333;
 }
 
 /* Media Query for smaller screens to have 2 cards per row */
@@ -100,4 +165,16 @@ nav li {
   .card {
     width: calc(50% - 20px);
   }
+}
+
+/* Media Query for even smaller screens to have 1 card per row */
+@media (max-width: 480px) {
+  .card {
+    width: 100%;
+  }
+}
+
+/* Animation for the cards on hover */
+.card:hover {
+  transform: scale(1.05);
 }
