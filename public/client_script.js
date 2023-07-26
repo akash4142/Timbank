@@ -6,13 +6,24 @@ const addToCartButtons = document.querySelectorAll('.add-to-cart-button');
 addToCartButtons.forEach((button) => {
   button.addEventListener('click', () => {
     const name = button.dataset.name;
-    const price = button.dataset.price;
-    cart.push({ name, price });
+    const price = parseFloat(button.dataset.price);
+
+    // Check if the item is already in the cart
+    const existingItem = cart.find((item) => item.name === name);
+
+    if (existingItem) {
+      // If the item is already in the cart, increase the quantity
+      existingItem.quantity += 1;
+    } else {
+      // If the item is not in the cart, add it with quantity 1
+      cart.push({ name, price, quantity: 1 });
+    }
+
     updateCart();
   });
 });
 
-// Function to update the cart items on the client-side
+
 function updateCart() {
   const cartItemsContainer = document.querySelector('.cart-items-container');
 
@@ -22,7 +33,39 @@ function updateCart() {
   cart.forEach((item) => {
     const cartItemDiv = document.createElement('div');
     cartItemDiv.classList.add('cart-item');
-    cartItemDiv.textContent = `${item.name} - Price: ${item.price}`;
+
+    const itemDetails = document.createElement('span');
+    itemDetails.textContent = `${item.name} - Price: ${item.price} - Quantity: `;
+    cartItemDiv.appendChild(itemDetails);
+
+    const decreaseButton = document.createElement('button');
+    decreaseButton.textContent = '-';
+    decreaseButton.classList.add('quantity-button');
+    decreaseButton.addEventListener('click', () => {
+      decreaseQuantity(item.name);
+    });
+    cartItemDiv.appendChild(decreaseButton);
+
+    const quantitySpan = document.createElement('span');
+    quantitySpan.textContent = item.quantity;
+    cartItemDiv.appendChild(quantitySpan);
+
+    const increaseButton = document.createElement('button');
+    increaseButton.textContent = '+';
+    increaseButton.classList.add('quantity-button');
+    increaseButton.addEventListener('click', () => {
+      increaseQuantity(item.name);
+    });
+    cartItemDiv.appendChild(increaseButton);
+
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'X';
+    removeButton.classList.add('remove-button');
+    removeButton.addEventListener('click', () => {
+      removeFromCart(item.name);
+    });
+    cartItemDiv.appendChild(removeButton);
+
     cartItemsContainer.appendChild(cartItemDiv);
   });
 
@@ -31,21 +74,42 @@ function updateCart() {
   cartContainer.style.display = 'block';
 
   // Calculate the total price
-  const totalPrice = cart.reduce((total, item) => total + parseFloat(item.price), 0);
+  const totalPrice = cart.reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0);
 
   // Display the total price
   const totalContainer = document.querySelector('#total-container');
   totalContainer.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
 }
 
-// // Event listener for "Pay Now" button click
-// const payNowButton = document.querySelector('#pay-now-button');
-// payNowButton.addEventListener('click', () => {
-//   // Implement the logic for payment processing here (e.g., redirect to a payment gateway).
-//   // For this example, we will just reset the cart and hide the cart container.
-//   cart.length = 0;
-//   updateCart();
-// });
+
+// Function to increase the quantity of an item in the cart
+function increaseQuantity(name) {
+  const item = cart.find((item) => item.name === name);
+  if (item) {
+    item.quantity += 1;
+    updateCart();
+  }
+}
+
+// Function to decrease the quantity of an item in the cart
+function decreaseQuantity(name) {
+  const item = cart.find((item) => item.name === name);
+  if (item && item.quantity > 1) {
+    item.quantity -= 1;
+    updateCart();
+  }
+}
+
+
+function removeFromCart(name) {
+  const itemIndex = cart.findIndex((item) => item.name === name);
+
+  if (itemIndex !== -1) {
+    cart.splice(itemIndex, 1);
+    updateCart();
+  }
+}
+
 
 // Function to hide the cart container
 function hideCart() {

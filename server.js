@@ -16,6 +16,9 @@ const { readDataFromFile } = require('./scripts');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+
+
+
 // Configure express-handlebars
 app.engine('hbs', exphbs.engine({
   extname: '.hbs',
@@ -134,12 +137,12 @@ app.post('/newcustomer', upload.single('featureImage'), (req, res) => {
 
     customers.addCustomer(newItem)
       .then((data) => {
-        console.log('New customer data:', data); 
-        res.redirect('/customers');
+        console.log('New customer data:', data);
+        res.redirect('/newcustomer');
       })
       .catch((error) => {
         console.log(error);
-        res.status(500).json({ message: 'Failed to add customer' });
+       res.redirect('/newcustomer');
       });
   }
 });
@@ -175,7 +178,7 @@ console.log(accountnum);
     if (customer) {
       console.log('login success')
       // User authentication successful, redirect to the payment details page
-      res.redirect('/customers');
+      res.redirect('/dashboard');
     } else {
       // User authentication failed, redirect back to the login page with an error message
       res.redirect('404');
