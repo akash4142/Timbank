@@ -86,6 +86,29 @@ if (getStartedButton) { // Check if getStartedButton exists before adding the ev
 }
 
 
+// Get all the links with the class "show-section"
+const showLinks = document.querySelectorAll('.show-section');
+
+// Loop through the links and add click event listeners
+showLinks.forEach((link) => {
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    // Get the value of the "data-section" attribute for the clicked link
+    const sectionToShow = link.dataset.section;
+
+    // Get all functionality sections
+    const functionalitySections = document.querySelectorAll('.functionality-section');
+
+    // Loop through the functionality sections and hide them all
+    functionalitySections.forEach((section) => {
+      section.classList.remove('show');
+    });
+
+    // Show the selected functionality section
+    document.getElementById(sectionToShow).classList.add('show');
+  });
+});
 
 
 
