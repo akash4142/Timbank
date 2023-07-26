@@ -8,8 +8,9 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const streamifier = require('streamifier');
 const { readDataFromFile } = require('./scripts');
-
-
+const session = require('express-session')
+const crypto = require('crypto');
+const secretKey = crypto.randomBytes(64).toString('hex');
 
 // Configure multer to store uploaded files in the 'uploads' folder
 
@@ -17,7 +18,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 
-
+app.use(
+  session({
+    secret: secretKey,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }, // Set this to true if using HTTPS in production
+    genid: (req) => {
+      return req.body.accountnum; // Use the accountnum as the session identifier
+    },
+  })
+);
 
 // Configure express-handlebars
 app.engine('hbs', exphbs.engine({
@@ -172,10 +183,11 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const accountnum = req.body.accountnum;
   const password = req.body.password;
-console.log(accountnum);
+
   customers.login({ accountnum, password })
   .then((customer) => {
     if (customer) {
+      req.session.accountnum = accountnum;
       console.log('login success')
       // User authentication successful, redirect to the payment details page
       res.redirect('/dashboard');
@@ -213,19 +225,35 @@ app.get('/timhortons', async (req, res) => {
 });
 
 app.get('/dashboard', (req, res) => {
-  // Assuming you have a function to get all customers from the database
-  // You can also add other data that you want to display on the dashboard page
-  customers.getAllCustomers()
-    .then(customers => {
-      // Render the dashboard page with the customers data and other functionality
-      res.render('dashboard', { layout: false, customers: customers });
+  // Check if the user is logged in (i.e., their user ID is stored in the session)
+  if (!req.session.accountnum) {
+    // If the user is not logged in, redirect them to the login page
+    return res.redirect('/login');
+  }
+
+  // Assuming you have a function to fetch a customer by their user ID
+  customers.getCustomerBycustomernum(req.session.accountnum)
+    .then((customer) => {
+      // Render the dashboard page with the customer data and other functionality
+      res.render('dashboard', { layout: false, customer: customer });
     })
-    .catch(error => {
-      console.error('Error fetching customers:', error);
-      res.status(500).json({ message: 'Failed to fetch customers' });
+    .catch((error) => {
+      console.error('Error fetching customer:', error);
+      res.status(500).json({ message: 'Failed to fetch customer' });
     });
 });
 
+// Logout route
+app.get('/logout', (req, res) => {
+  // Destroy the session and remove the accountnum from the session data
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error during logout:', err);
+    }
+    // Redirect to the login page after logout
+    res.redirect('/login');
+  });
+});
 
 app.post('/update-account', (req, res) => {
   const { accountnum, name, password } = req.body;

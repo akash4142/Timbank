@@ -176,5 +176,70 @@ showLinks.forEach((link) => {
 
 
 
+document.addEventListener('DOMContentLoaded', () => {
+  const dashboardContent = document.getElementById('dashboard-content');
+  const loginContent = document.getElementById('login-content');
+  const logoutButton = document.getElementById('logout-button');
+
+  // Function to show the dashboard content and hide the login form
+  function showDashboard() {
+    dashboardContent.style.display = 'block';
+    loginContent.style.display = 'none';
+  }
+
+  // Function to show the login form and hide the dashboard content
+  function showLogin() {
+    dashboardContent.style.display = 'none';
+    loginContent.style.display = 'block';
+  }
+
+  // Function to handle the login form submission
+  function handleLogin(event) {
+    event.preventDefault();
+    const accountnum = document.getElementById('accountnum').value;
+    const password = document.getElementById('password').value;
+
+    // Send a request to the server to authenticate the user
+    fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ accountnum, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Login successful, show the dashboard
+          showDashboard();
+          document.getElementById('logged-in-username').innerText = accountnum;
+        } else {
+          // Login failed, show error message
+          document.getElementById('login-error').innerText = data.message;
+        }
+      })
+      .catch((error) => {
+        console.error('Error during login:', error);
+        document.getElementById('login-error').innerText = 'Login failed';
+      });
+  }
+
+  // Add event listener for the login form submission
+  const loginForm = document.getElementById('login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+  }
+
+  // TODO: Add event listeners for the functionality links (delete, update, withdraw, transfer, account details) to show/hide the respective sections
+
+  // TODO: Add event listener for the logout button to log out the user and show the login form again
+
+  // TODO: Add code to check the login status when the page loads and show the appropriate content (dashboard or login form) based on that
+
+  // You can add more JavaScript code as needed to handle other functionalities and interactions on the dashboard page
+});
+
+
+
 
 
