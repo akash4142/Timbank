@@ -294,3 +294,39 @@ module.exports.getCustomerDetails = function(accountnum) {
       });
   });
 };
+
+
+module.exports.deductAmount = async function (accountnum ,amount) {
+  console.log('hi from deductamount');
+  amount = 1;
+  console.log(accountnum);
+  console.log(amount);
+
+  try {
+    const customer = await Customer.findOne({
+      where: { accountnum: accountnum.toString() },
+    });
+
+    if (!customer) {
+      // If customer not found, throw an error
+      throw new Error('Customer not found');
+    }
+
+    // Check if the customer has sufficient balance for the deduction
+    if (customer.amount >= amount) {
+      // Calculate the updated balance after deduction
+      const updatedBalance = customer.amount - amount;
+
+      // Update the customer's balance in the database
+      await customer.update({ amount: updatedBalance });
+
+      console.log('Deduction successful');
+    } else {
+      throw new Error('Insufficient funds');
+    }
+  } catch (err) {
+    console.error('Error during deduction:', err);
+    throw new Error('Failed to deduct amount');
+  }
+};
+

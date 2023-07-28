@@ -1,3 +1,6 @@
+
+
+
 // Cart to store selected items
 const cart = [];
 
@@ -127,12 +130,6 @@ menu.addEventListener('click', function () {
     menuLinks.classList.toggle('active');
 });
 
-
-function hideCart() {
-  const cartContainer = document.getElementById('cart-container');
-  cartContainer.style.display = 'none';
-}
-
 // Event listener for the close button in the cart container
 const closeButton = document.querySelector('.close-button');
 if (closeButton) { // Check if closeButton exists before adding the event listener
@@ -229,15 +226,112 @@ document.addEventListener('DOMContentLoaded', () => {
   if (loginForm) {
     loginForm.addEventListener('submit', handleLogin);
   }
-
-  // TODO: Add event listeners for the functionality links (delete, update, withdraw, transfer, account details) to show/hide the respective sections
-
-  // TODO: Add event listener for the logout button to log out the user and show the login form again
-
-  // TODO: Add code to check the login status when the page loads and show the appropriate content (dashboard or login form) based on that
-
-  // You can add more JavaScript code as needed to handle other functionalities and interactions on the dashboard page
 });
+
+// ... Your existing code ...
+
+// Event listener for the "Pay Now" button
+const payNowButton = document.querySelector('#pay-now-button');
+if (payNowButton) {
+   let totalPrice = calculateTotalPrice();
+   totalPrice =8
+    console.log(totalPrice)
+  console.log('hello from paynowbutton')
+  payNowButton.addEventListener('click', () => {
+    
+    handlePayment(totalPrice);
+  });
+}
+
+function calculateTotalPrice() {
+  return cart.reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0);
+}
+
+// Function to handle the payment process
+function handlePayment(totalPrice) {
+// Check if the user is logged in (using AJAX request to the '/check-login' route)
+  fetch('/check-login', { credentials: 'include' })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Login check response:', data);
+      if (data.isLoggedIn) {
+        const accountnum = data.accountnum;
+        console.log(accountnum); // Verify the value of accountnum
+        console.log(totalPrice); // Verify the value of totalPrice
+            makePayment(accountnum,totalPrice);
+          } else {
+        // User is not logged in, show the login page
+        window.location.href = '/login'; // Redirect to the login page
+      }
+    })
+    .catch((error) => {
+      console.error('Error checking login status:', error);
+      // Handle any errors that occurred during the login check
+    });
+}
+
+
+// Function to initiate the payment process
+function makePayment(accountnum,totalPrice) {
+  console.log('hello from makepayment');
+  console.log(accountnum)
+   // Assuming you have access to the accountnum here
+  
+console.log(totalPrice)
+   fetch('/deduct-amount', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ accountnum,totalPrice}),
+  })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Payment successful, show a success message to the user
+          console.log('Payment successful! Amount deducted: $' + totalPrice);
+          // Clear the cart after successful payment
+          cart.length = 0;
+          updateCart();
+        } else {
+          // Payment failed, show an error message to the user
+          console.log('Payment failed.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error during payment:', error);
+        // Handle any errors that occurred during the payment process
+      });
+}
+
+
+function updateGetStartedButton() {
+  // Check if the user is logged in (using AJAX request to the '/check-login' route)
+  fetch('/login', { credentials: 'include' }) // Use 'include' to send cookies along with the request
+    .then((response) => response.json())
+    .then((data) => {
+      const getStartedButton = document.getElementById('getStartedButton');
+      if (data.isLoggedIn) {
+        // User is logged in, update the button text and click event
+        getStartedButton.innerText = 'Continue to Dashboard';
+        getStartedButton.addEventListener('click', () => {
+          window.location.href = '/dashboard';
+        });
+      } else {
+        // User is not logged in, update the button text and click event
+        getStartedButton.innerText = 'Get Started';
+        getStartedButton.addEventListener('click', () => {
+          window.location.href = '/login';
+        });
+      }
+    })
+    .catch((error) => {
+      console.error('Error checking login status:', error);
+      // Handle any errors that occurred during the login check
+    });
+}
+
+updateGetStartedButton();
 
 
 

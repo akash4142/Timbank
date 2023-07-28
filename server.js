@@ -153,7 +153,7 @@ app.post('/newcustomer', upload.single('featureImage'), (req, res) => {
       })
       .catch((error) => {
         console.log(error);
-       res.redirect('/newcustomer');
+        res.render('newcustomer', { layout: false, errorMessage: 'Error creating new customer' });
       });
   }
 });
@@ -174,10 +174,75 @@ app.post('/delete', (req, res) => {
     });
 });
 
+app.get('/check-login', (req, res) => {
+  if (req.session.accountnum) {
+    // User is logged in
+    const accountnum = req.session.accountnum;
+    res.json({ isLoggedIn: true, accountnum: accountnum });
+  } else {
+    // User is not logged in
+    res.json({ isLoggedIn: false, accountnum: null });
+  }
+});
 
-// Login route
+
+// Add a new route to handle deduction of amount
+app.post('/deduct-amount', (req, res) => {
+  const {accountnum , totalPrice} = req.session;
+ 
+  console.log(accountnum)
+  console.log(totalPrice);
+  customers.deductAmount(accountnum,totalPrice)
+    .then(() => {
+      console.log('Amount deducted successfully');
+      res.json({ success: true });
+    })
+    .catch((error) => {
+      console.error('Error deducting amount:', error);
+      res.status(500).json({ success: false, message: 'Failed to deduct amount' });
+    });
+});
+
+
+
+// Route to handle the payment process
+app.post('/pay-now', (req, res) => {
+  
+  // Check if the user is logged in (You should have middleware to handle session authentication)
+  if (!req.session.accountnum) {
+    return res.status(401).json({ success: false, message: 'User not logged in' });
+  }
+
+  // Retrieve the total price from the request body
+  const totalPrice = parseFloat(req.body.totalPrice);
+
+  // Find the user in the userAccounts object based on the logged-in accountnum
+  const accountnum = req.session.accountnum;
+  const user = customers.getCustomerBycustomernum(accountnum);
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'User not found' });
+  }
+
+  // Check if the user has enough balance for the payment
+  if (user.balance >= totalPrice) {
+    // Deduct the amount from the user's balance
+    user.balance -= totalPrice;
+
+    // Update the customer's data with the new balance
+    updateCustomer(accountnum, user);
+
+    // Payment successful, return success response
+    return res.status(200).json({ success: true, message: 'Payment successful' });
+  } else {
+    return res.status(400).json({ success: false, message: 'Insufficient balance' });
+  }
+});
+
+
 app.get('/login', (req, res) => {
-  res.render('login', { layout: false });
+  const isLoggedIn = req.session.accountnum ? true : false;
+  res.render('login', { layout: false, isLoggedIn: isLoggedIn });
 });
 
 app.post('/login', (req, res) => {
@@ -188,17 +253,17 @@ app.post('/login', (req, res) => {
   .then((customer) => {
     if (customer) {
       req.session.accountnum = accountnum;
-      console.log('login success')
+      
       // User authentication successful, redirect to the payment details page
       res.redirect('/dashboard');
     } else {
       // User authentication failed, redirect back to the login page with an error message
-      res.redirect('404');
+      res.render('login', { layout: false, isLoggedIn: false, errorMessage: 'Invalid accountnum or password' });
     }
   })
   .catch((error) => {
     console.error('Error during login:', error);
-    res.status(500).json({ message: 'Login failed' });
+    res.render('login', { layout: false, isLoggedIn: false, errorMessage: 'Invalid accountnum or password' });
   });
 });
 
