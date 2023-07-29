@@ -115,7 +115,6 @@
     "streamsearch": "^1.1.0",
     "string_decoder": "^1.1.1",
     "string-width": "^5.1.2",
-    "string-width-cjs": "^4.2.3",
     "strip-ansi": "^7.1.0",
     "strip-ansi-cjs": "^6.0.1",
     "supports-color": "^7.2.0",
