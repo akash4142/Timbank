@@ -116,7 +116,6 @@
     "string_decoder": "^1.1.1",
     "string-width": "^5.1.2",
     "strip-ansi": "^7.1.0",
-    "strip-ansi-cjs": "^6.0.1",
     "supports-color": "^7.2.0",
     "toidentifier": "^1.0.1",
     "type-is": "^1.6.18",
