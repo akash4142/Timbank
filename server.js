@@ -68,7 +68,7 @@ function onHttpStart() {
 }
 
 app.get('/', (req, res) => {
-  res.render('home',{layout:false});
+  res.render('home');
 });
 
 app.get('/customers', function (req, res) {
