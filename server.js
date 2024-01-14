@@ -68,7 +68,7 @@ function onHttpStart() {
 }
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname,'home.hbs'));
+  res.render('home',{layout:false});
 });
 
 app.get('/customers', function (req, res) {
